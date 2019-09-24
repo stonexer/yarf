@@ -1,15 +1,11 @@
-import { VNode, Fiber, WorkTag } from '../types';
+import { VNode } from '../types';
+import {
+  createContainer,
+  updateContainer
+} from '../reconciler/fiberReconciler';
 
 export function render(vnode: VNode, parentDOMNode: HTMLElement) {
-  const rootFiber = {
-    tag: WorkTag.HostRoot,
-    stateNode: {
-      root: parentDOMNode
-    },
-    props: {
-      children: vnode
-    }
-  };
-}
+  const container = createContainer(parentDOMNode);
 
-function createRootContainer() {}
+  updateContainer(vnode, container);
+}

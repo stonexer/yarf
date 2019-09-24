@@ -3,7 +3,16 @@
   "version": "1.0.0",
   "main": "index.js",
   "license": "MIT",
+  "scripts": {
+    "dev": "parcel ./example/index.html",
+    "start": "yarn dev"
+  },
   "devDependencies": {
+    "@types/requestidlecallback": "^0.1.1",
+    "parcel-bundler": "^1.12.3",
     "typescript": "^3.6.3"
+  },
+  "dependencies": {
+    "requestidlecallback": "^0.3.0"
   }
 }

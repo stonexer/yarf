@@ -7,6 +7,8 @@ export type Key = null | string;
  * 虚拟 DOM 节点
  */
 export interface VNode<P = {}> {
+  $$typeof: any;
+
   type: any;
   props: P;
   key: Key;
@@ -55,6 +57,15 @@ export interface Fiber {
 
   pendingProps: any;
   memoizedProps: any;
+
+  // TODO: 更新队列
+  updateQueue: Array<any> | null;
+}
+
+export interface FiberRoot {
+  current: Fiber;
+
+  containerInfo: any;
 }
 
 export interface ReactElement {

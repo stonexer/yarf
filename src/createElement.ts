@@ -5,6 +5,8 @@ export function createElement(
   props: Record<string, any>,
   ...children: any[]
 ) {
+  props = props || {};
+
   if (children != null && children.length > 0) {
     props.children = children;
   }
