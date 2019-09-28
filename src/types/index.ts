@@ -21,7 +21,8 @@ export interface VNode<P = {}> {
  */
 export enum WorkTag {
   HostRoot,
-  HostComponent
+  HostComponent,
+  FunctionComponent
 }
 
 /**
@@ -60,6 +61,16 @@ export interface Fiber {
 
   // TODO: 更新队列
   updateQueue: Array<any> | null;
+
+  // Effect
+  effectTag: EffectTag;
+
+  // 下一个 Effect 的 Fiber
+  nextEffect: Fiber | null;
+
+  // 最前 和 最后 的 Fiber
+  firstEffect: Fiber | null;
+  lastEffect: Fiber | null;
 }
 
 export interface FiberRoot {
@@ -74,3 +85,5 @@ export interface ReactElement {
   props: any;
   key: Key;
 }
+
+export type EffectTag = number;

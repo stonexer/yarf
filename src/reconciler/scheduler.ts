@@ -1,6 +1,7 @@
 import { Fiber, WorkTag, FiberRoot } from '../types';
 import { createWorkInProgress } from './fiber';
 import { beginWork } from './beginWork';
+import { NoEffect } from '../shared/effectTag';
 
 let workInProgress: Fiber | null;
 
@@ -53,6 +54,8 @@ function performUnitOfWork(unitOfWork: Fiber): Fiber | null {
 
   let next = beginWork(current, unitOfWork);
 
+  console.log('next', next);
+
   if (next === null) {
     next = completeUnitOfWork(unitOfWork);
   }
@@ -61,11 +64,23 @@ function performUnitOfWork(unitOfWork: Fiber): Fiber | null {
 }
 
 function completeUnitOfWork(unitOfWork: Fiber): Fiber | null {
-  // 完成当前任务，并移动到
-  while (true) {
-    const current = unitOfWork.alternate;
-    const returnFiber = unitOfWork.return;
+  workInProgress = unitOfWork;
 
-    const sibling = unitOfWork.sibling;
+  while (workInProgress !== null) {
+    let returnFiber = workInProgress.return;
+    let siblingFiber = workInProgress.sibling;
+
+    const next = completeWork(workInProgress);
+
+    if (siblingFiber !== null) {
+      return siblingFiber;
+    } else if (returnFiber !== null) {
+      workInProgress = returnFiber;
+      continue;
+    } else {
+      return null;
+    }
   }
+
+  return null;
 }

@@ -12,6 +12,7 @@ export function createElement(
   }
 
   return {
+    $$typeof: 'React.Element',
     type,
     key: props.key || null,
     props

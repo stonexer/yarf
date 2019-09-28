@@ -1,4 +1,5 @@
 import { WorkTag, Key, Fiber, FiberRoot, VNode } from '../types';
+import { NoEffect } from '../shared/effectTag';
 
 /**
  * Create a fiber node
@@ -25,7 +26,13 @@ export function createFiber(tag: WorkTag, pendingProps: any, key: Key): Fiber {
 
     alternate: null,
 
-    updateQueue: null
+    updateQueue: null,
+
+    effectTag: NoEffect,
+
+    nextEffect: null,
+    firstEffect: null,
+    lastEffect: null
   };
 }
 
@@ -51,10 +58,17 @@ export function createWorkInProgress(current: Fiber, pendingProps: any) {
     current.alternate = workInProgress;
   } else {
     workInProgress.pendingProps = pendingProps;
+
+    workInProgress.effectTag = NoEffect;
+
+    workInProgress.nextEffect = null;
+    workInProgress.firstEffect = null;
+    workInProgress.lastEffect = null;
   }
 
   workInProgress.child = current.child;
   workInProgress.memoizedProps = current.memoizedProps;
+  workInProgress.updateQueue = current.updateQueue;
 
   workInProgress.sibling = current.sibling;
   workInProgress.index = current.index;
@@ -62,13 +76,20 @@ export function createWorkInProgress(current: Fiber, pendingProps: any) {
   return workInProgress;
 }
 
-export function createFiberFromElement(el: VNode): Fiber | null {
-  if (el === null) {
-    return null;
+export function createFiberFromElement(el: VNode): Fiber {
+  let fiber: Fiber | null = null;
+
+  if (typeof el.type === 'string') {
+    fiber = createFiber(WorkTag.HostComponent, el.props, el.key);
+  } else if (typeof el.$$typeof === 'function') {
+    fiber = createFiber(WorkTag.FunctionComponent, el.props, el.key);
+  } else {
+    // TODO:
+    fiber = createFiber(WorkTag.FunctionComponent, el.props, el.key);
   }
 
-  let fiber: Fiber;
-  if (typeof el.type === 'string') {
-    fiber =
-  }
+  fiber.type = el.type;
+  fiber.elementType = el.type;
+
+  return fiber;
 }
