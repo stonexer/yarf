@@ -20,9 +20,10 @@ export interface VNode<P = {}> {
  * fiber 节点的任务类型
  */
 export enum WorkTag {
-  HostRoot,
-  HostComponent,
-  FunctionComponent
+  HostRoot = 'HostRoot',
+  HostComponent = 'HostComponent',
+  FunctionComponent = 'FunctionComponent',
+  HostText = 'HostText'
 }
 
 /**
@@ -77,6 +78,8 @@ export interface FiberRoot {
   current: Fiber;
 
   containerInfo: any;
+
+  finishedWork: Fiber | null;
 }
 
 export interface ReactElement {

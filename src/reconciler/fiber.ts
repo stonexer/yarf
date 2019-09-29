@@ -93,3 +93,8 @@ export function createFiberFromElement(el: VNode): Fiber {
 
   return fiber;
 }
+
+export function createFiberFromText(content: any) {
+  const fiber = createFiber(WorkTag.HostText, content, null);
+  return fiber;
+}

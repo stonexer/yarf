@@ -1,5 +1,10 @@
 import { Fiber } from '../types';
-import { createFiberFromElement, createWorkInProgress } from './fiber';
+import {
+  createFiberFromElement,
+  createWorkInProgress,
+  createFiber,
+  createFiberFromText
+} from './fiber';
 import * as EffectTag from '../shared/effectTag';
 
 export function reconcileChildren(
@@ -10,7 +15,7 @@ export function reconcileChildren(
   wip.child = reconcileChildFibers(
     wip,
     current !== null ? current.child : current,
-    Array.isArray(nextChildren) ? nextChildren : [nextChildren]
+    nextChildren
   );
 }
 
@@ -122,6 +127,16 @@ function updateElement(
   }
 }
 
+function updateTextNode(
+  returnFiber: Fiber,
+  current: Fiber | null,
+  textContent: any
+) {
+  const created = createFiberFromText(textContent);
+  created.return = returnFiber;
+  return created;
+}
+
 /**
  * newChild + oldFiber => newFiber
  *
@@ -131,6 +146,10 @@ function updateElement(
  */
 function updateSlot(returnFiber: Fiber, oldFiber: Fiber | null, newChild: any) {
   const oldKey = oldFiber !== null ? oldFiber.key : null;
+
+  if (typeof newChild === 'string') {
+    return updateTextNode(returnFiber, oldFiber, newChild);
+  }
 
   if (typeof newChild === 'object' && newChild !== null) {
     if (newChild.$$typeof === 'React.Element' && newChild.key === oldKey) {
@@ -155,6 +174,12 @@ function updateFromMap(
 }
 
 function createChild(returnFiber: Fiber, newChild: any) {
+  if (typeof newChild === 'string') {
+    const created = createFiberFromText(newChild);
+    created.return = returnFiber;
+    return created;
+  }
+
   if (typeof newChild === 'object' && newChild !== null) {
     if (newChild.$$typeof === 'React.Element') {
       const created = createFiberFromElement(newChild);
@@ -171,7 +196,24 @@ function reconcileChildFibers(
   currentFirstChild: Fiber | null,
   newChild: any
 ): Fiber | null {
-  return reconcileChildrenArray(returnFiber, currentFirstChild, newChild);
+  if (typeof newChild === 'string') {
+    return reconcileSingleElement(returnFiber, currentFirstChild, newChild);
+  }
+  return reconcileChildrenArray(
+    returnFiber,
+    currentFirstChild,
+    Array.isArray(newChild) ? newChild : [newChild]
+  );
+}
+
+function reconcileSingleElement(
+  returnFiber: Fiber,
+  currentFirstChild: Fiber | null,
+  el: any
+) {
+  const created = createFiberFromElement(el);
+  created.return = returnFiber;
+  return created;
 }
 
 function reconcileChildrenArray(
