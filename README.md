@@ -24,6 +24,4 @@
 - https://github.com/facebook/react
 - https://github.com/preactjs/preact
 - https://github.com/pomber/didact
-- https://github.com/132yse/fre
-- https://github.com/Foveluy/Luy
 - https://github.com/tranbathanhtung/react-fiber-implement
